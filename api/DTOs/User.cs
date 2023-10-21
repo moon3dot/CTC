@@ -1,6 +1,6 @@
 namespace api.DTOs;
 
-public record CustomerUser(
+public record User(
      string Id,
      string FullName
 );
