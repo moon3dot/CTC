@@ -16,10 +16,22 @@ public class AccountController : BaseApiController
      [HttpPost("register")]
      public async Task<ActionResult<UserDto>> Register(RegisterDto userInput, CancellationToken cancellationToken)
      {
-          UserDto? userDto = await _accountRepasitory.CreatUserAccount(userInput, cancellationToken);
+          UserDto? userDto = await _accountRepasitory.CreatAsyncCustomer(userInput, cancellationToken);
 
           if (userDto is null)
                return BadRequest("Email/Username is taken.");
+
+          return userDto;
+     }
+
+     [HttpPost("login")]
+
+     public async Task<ActionResult<UserDto>> Login(RegisterDto userinput, CancellationToken cancellationToken)
+     {
+          UserDto? userDto = await _accountRepasitory.LoginAsyncCustomer(userinput, cancellationToken);
+
+          if (userDto is null)
+               return Unauthorized("Wrong username or password");
 
           return userDto;
      }
