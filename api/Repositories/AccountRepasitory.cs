@@ -14,7 +14,7 @@ public class AccountRepasitory
           _collection = database.GetCollection<Customer>(_collectionName);
      }
      #endregion
-     public async Task<CustomerUser?> CreatCustomerAccount(RegisterDto userInput, CancellationToken cancellationToken)
+     public async Task<UserDto?> CreatCustomerAccount(RegisterDto userInput, CancellationToken cancellationToken)
      {
           bool doesAccountExist = await _collection.Find<Customer>(User =>
            userInput.Phone == userInput.Phone.ToLower().Trim()).AnyAsync(cancellationToken);
@@ -34,7 +34,7 @@ public class AccountRepasitory
 
           if (customer.Id is not null)
           {
-               CustomerUser customerUser = new CustomerUser(
+               UserDto customerUser = new UserDto(
                     Id: customer.Id,
                     FullName: customer.FullName
                );
