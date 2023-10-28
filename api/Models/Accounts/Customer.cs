@@ -9,6 +9,5 @@ public record Customer(
      string FullName,
      [MaxLength(20),MinLength(12),Required(ErrorMessage = "This file is required"),DataType(DataType.Password)]
      byte[] PasswordHash,
-     byte[] PasswordSalt,
-     string VerificationCode // conver to int for send to SMTP
+     string SaltKey // conver to int for send to SMTP
 );
