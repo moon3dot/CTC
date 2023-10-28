@@ -26,7 +26,7 @@ namespace api.Repositories
                if (doesAccountExist)
                     return null;
 
-               Hash? passwordHashed = _hashSaltRepository.CreatHash(userInput);
+               Hash? passwordHashed = _hashSaltRepository.CreatHash(userInput, cancellationToken);
 
                if (passwordHashed is null)
                     return null;
@@ -53,28 +53,5 @@ namespace api.Repositories
                return null;
           }
      }
+
 }
-
-// public async Task<UserDto?> LoginAsyncCustomer(RegisterDto userinput, CancellationToken cancellationToken)
-// {
-//      Customer customer = await _collection.Find<Customer>(user => user.Phone == userinput.Phone.ToLower().Trim()).FirstOrDefaultAsync(cancellationToken);
-
-//      if (customer is null)
-//           return null;
-
-//      using var hmac = new HMACSHA512(customer.PasswordSalt!);
-
-//      var ComputedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userinput.Password));
-
-//      if (customer.PasswordHash is not null && customer.PasswordHash.SequenceEqual(ComputedHash))
-//      {
-//           if (customer.Id is not null)
-//           {
-//                return new UserDto(
-//                     Id: customer.Id,
-//                     FullName: customer.FullName
-//                );
-//           }
-//      }
-//      return null;
-// }

@@ -7,7 +7,7 @@ namespace api.Repositories;
 
 public class HashSaltRepasitory
 {
-    public Hash? CreatHash(RegisterDto passwordHash)
+    public Hash? CreatHash(RegisterDto passwordHash , CancellationToken cancellationToken)
     {
         using var hmac = new HMACSHA512();
 
