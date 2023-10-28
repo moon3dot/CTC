@@ -1,27 +1,23 @@
 using System.Security.Cryptography;
 using System.Text;
+using api.Interfaces;
 using api.Models;
 
 namespace api.Repositories;
 
-public class HashSaltRepasitory
+public class HashSaltRepasitory : IHashAndSalt
 {
-    public Task<Hash?> CreatHash(string Userpassword, byte[] RSaltKay)
+    public Hash? CreatHash(string userPassword, Hash passwordHash)
     {
         using var hmac = new HMACSHA512();
 
-        if (Userpassword is not null)
-        {
-            Hash hash = new Hash(
-              PasswordHash: hmac.ComputeHash(Encoding.UTF8.GetBytes(Userpassword)),
-             SaltKey: hmac.Key
-          ); 
-          RSaltKay = hash.SaltKey;
-          return Task.FromResult<Hash?>(hash);
-        }
+        if (userPassword is null)
+            return null;
 
-        return Task.FromResult<Hash?>(null);
+        Hash creatHash = new Hash(
+           PasswordHash: hmac.ComputeHash(Encoding.UTF8.GetBytes(userPassword)),
+           Salt: hmac.Key
+        );
+        return creatHash;
     }
-
-    
 }

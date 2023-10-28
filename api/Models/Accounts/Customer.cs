@@ -8,6 +8,6 @@ public record Customer(
      [MaxLength(20),MinLength(12),Required(ErrorMessage = "This file is required")]
      string FullName,
      [MaxLength(20),MinLength(12),Required(ErrorMessage = "This file is required"),DataType(DataType.Password)]
-     byte[] PasswordHash,
-     string SaltKey // conver to int for send to SMTP
+     byte[] FinalPassword,
+     byte[] SaltKey
 );

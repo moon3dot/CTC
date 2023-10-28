@@ -4,5 +4,5 @@ namespace api.Interfaces;
 
 public interface IHashAndSalt
 {
-     public Task<Hash?> CreatHash(string Userpassword, byte[] saltKay);
+     public Hash? CreatHash(string userPassword, Hash passwodHash);
 }

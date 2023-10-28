@@ -3,55 +3,57 @@ using System.Text;
 using api.Interfaces;
 using api.Models;
 
-namespace api.Repositories;
-
-public class AccountRepasitory
+namespace api.Repositories
 {
-     #region golobal var
-     private const string _collectionName = "users"; //global var for using 
-     private readonly IMongoCollection<Customer>? _collection; //global var for using find & ..
-     private readonly IHashAndSalt _hashSaltRepository;
-     #endregion
-
-     #region  inject Imongo to repasitory
-     public AccountRepasitory(IMongoClient client, IMongoDbSettings DbSettings, IHashAndSalt hashSaltRepository)
+     public class AccountRepository
      {
-          var database = client.GetDatabase(DbSettings.DatabaseName);
-          _collection = database.GetCollection<Customer>(_collectionName);
-          _hashSaltRepository = hashSaltRepository;
-     }
-     #endregion
-     public async Task<UserDto?> CreatAsyncCustomer(RegisterDto userInput, CancellationToken cancellationToken)
-     {
-          bool doesAccountExist = await _collection.Find<Customer>(User =>
-           userInput.Phone == userInput.Phone.ToLower().Trim()).AnyAsync(cancellationToken);
+          private const string _collectionName = "users";
+          private readonly IMongoCollection<Customer>? _collection;
+          private readonly IHashAndSalt _hashSaltRepository;
 
-          if (doesAccountExist)
-               return null;
-
-          var hashSalt = await _hashSaltRepository.CreatHash(userInput.Password, new byte[0]);
-
-          Customer customer = new Customer(
-               Id: null,
-               Phone: userInput.Phone.ToLower().Trim(),
-               FullName: userInput.FullName.ToLower().Trim(),
-               PasswordHash: hashSalt!.PasswordHash,
-               SaltKey: hashSalt.SaltKey
-          );
-
-          if (_collection is not null)
-               await _collection.InsertOneAsync(customer, null, cancellationToken);
-
-          if (customer.Id is not null)
+          public AccountRepository(IMongoClient client, IMongoDbSettings DbSettings, IHashAndSalt hashSaltRepository)
           {
-               UserDto customerUser = new UserDto(
-                    Id: customer.Id,
-                    FullName: customer.FullName
-               );
-               return customerUser;
+               var database = client.GetDatabase(DbSettings.DatabaseName);
+               _collection = database.GetCollection<Customer>(_collectionName);
+               _hashSaltRepository = hashSaltRepository;
           }
-          return null;
+
+          public async Task<UserDto?> CreateAsyncCustomer(RegisterDto userInput, CancellationToken cancellationToken)
+          {
+               bool doesAccountExist = await _collection.Find<Customer>(User =>
+                   userInput.Phone == userInput.Phone.ToLower().Trim()).AnyAsync(cancellationToken);
+
+               if (doesAccountExist)
+                    return null;
+
+               Hash? password = _hashSaltRepository.CreateHash(userInput.Password, new Hash());
+
+               if (password is null)
+                    return null;
+
+               Customer customer = new Customer(
+                   Id: null,
+                   Phone: userInput.Phone.ToLower().Trim(),
+                   FullName: userInput.FullName.ToLower().Trim(),
+                   FinalPassword: password.PasswordHash,
+                   SaltKey: password.SaltKey
+               );
+
+               if (_collection is not null)
+                    await _collection.InsertOneAsync(customer, null, cancellationToken);
+
+               if (customer.Id is not null)
+               {
+                    UserDto customerUser = new UserDto(
+                        Id: customer.Id,
+                        FullName: customer.FullName
+                    );
+                    return customerUser;
+               }
+               return null;
+          }
      }
+}
 
      // public async Task<UserDto?> LoginAsyncCustomer(RegisterDto userinput, CancellationToken cancellationToken)
      // {
