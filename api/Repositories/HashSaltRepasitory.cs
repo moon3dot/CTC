@@ -5,19 +5,19 @@ using api.Models;
 
 namespace api.Repositories;
 
-public class HashSaltRepasitory : IHashAndSalt
+public class HashSaltRepasitory
 {
-    public Hash? CreatHash(string userPassword, Hash passwordHash)
+    public Hash? CreatHash(RegisterDto passwordHash)
     {
         using var hmac = new HMACSHA512();
 
-        if (userPassword is null)
+        if (passwordHash is null)
             return null;
 
-        Hash creatHash = new Hash(
-           PasswordHash: hmac.ComputeHash(Encoding.UTF8.GetBytes(userPassword)),
+        Hash userPasswordHashed = new Hash(
+           Password: hmac.ComputeHash(Encoding.UTF8.GetBytes(passwordHash.Password)),
            Salt: hmac.Key
         );
-        return creatHash;
+        return userPasswordHashed;
     }
 }

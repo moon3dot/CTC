@@ -26,17 +26,17 @@ namespace api.Repositories
                if (doesAccountExist)
                     return null;
 
-               Hash? password = _hashSaltRepository.CreateHash(userInput.Password, new Hash());
+               Hash? passwordHashed = _hashSaltRepository.CreatHash(userInput);
 
-               if (password is null)
+               if (passwordHashed is null)
                     return null;
 
                Customer customer = new Customer(
                    Id: null,
                    Phone: userInput.Phone.ToLower().Trim(),
                    FullName: userInput.FullName.ToLower().Trim(),
-                   FinalPassword: password.PasswordHash,
-                   SaltKey: password.SaltKey
+                   FinalPassword: passwordHashed.Password,
+                   SaltKey: passwordHashed.Salt
                );
 
                if (_collection is not null)
@@ -55,27 +55,26 @@ namespace api.Repositories
      }
 }
 
-     // public async Task<UserDto?> LoginAsyncCustomer(RegisterDto userinput, CancellationToken cancellationToken)
-     // {
-     //      Customer customer = await _collection.Find<Customer>(user => user.Phone == userinput.Phone.ToLower().Trim()).FirstOrDefaultAsync(cancellationToken);
+// public async Task<UserDto?> LoginAsyncCustomer(RegisterDto userinput, CancellationToken cancellationToken)
+// {
+//      Customer customer = await _collection.Find<Customer>(user => user.Phone == userinput.Phone.ToLower().Trim()).FirstOrDefaultAsync(cancellationToken);
 
-     //      if (customer is null)
-     //           return null;
+//      if (customer is null)
+//           return null;
 
-     //      using var hmac = new HMACSHA512(customer.PasswordSalt!);
+//      using var hmac = new HMACSHA512(customer.PasswordSalt!);
 
-     //      var ComputedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userinput.Password));
+//      var ComputedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userinput.Password));
 
-     //      if (customer.PasswordHash is not null && customer.PasswordHash.SequenceEqual(ComputedHash))
-     //      {
-     //           if (customer.Id is not null)
-     //           {
-     //                return new UserDto(
-     //                     Id: customer.Id,
-     //                     FullName: customer.FullName
-     //                );
-     //           }
-     //      }
-     //      return null;
-     // }
-}
+//      if (customer.PasswordHash is not null && customer.PasswordHash.SequenceEqual(ComputedHash))
+//      {
+//           if (customer.Id is not null)
+//           {
+//                return new UserDto(
+//                     Id: customer.Id,
+//                     FullName: customer.FullName
+//                );
+//           }
+//      }
+//      return null;
+// }
