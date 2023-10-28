@@ -15,4 +15,3 @@ public record LoginDto(
      [MaxLength(20),MinLength(3),Required(ErrorMessage =("This Fild is required")),DataType(DataType.Password)]
      string Password
 );
-
